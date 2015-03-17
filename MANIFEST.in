@@ -1,0 +1,3 @@
+recursive-include arcpy_extensions *
+include *.md
+include *.txt
