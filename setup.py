@@ -20,7 +20,7 @@ setup(
     name='arcpy-extensions',
     packages=['arcpy_extensions'],
     version=version,
-    description=('A collection of helper functions and classes for the ArcGIS arcpy interface.')
+    description=('A collection of helper functions and classes for the ArcGIS arcpy interface.'),
     long_description=readme,
     author='Jarrett Keifer',
     author_email='jkeifer0@gmail.com',
