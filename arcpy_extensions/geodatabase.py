@@ -1,17 +1,16 @@
 import os
 from logging import exception
-from arcpy import ListFeatureClasses, ListRasters, ListTables, Describe
-from arcpy import CopyFeatures_management, CopyRaster_management, TableToTable_conversion
-from arcpy import env, ExecuteError
-from utilities import generate_random_name
+from arcpy import ListFeatureClasses, ListRasters, ListTables, Describe,\
+    CopyFeatures_management, CopyRaster_management, TableToTable_conversion,\
+    env
 from constants import RASTER_TYPECODE, FC_TYPECODE, TABLE_TYPECODE,\
     SHAPEFILE_EXT, DEFAULT_RASTER_EXT, DEFAULT_TABLE_EXT
-
 
 
 # *************** CONSTANTS ***************
 
 # none
+
 
 # **************** CLASSES ****************
 
@@ -44,9 +43,9 @@ class Geodatabase(object):
 
         self.validate_geodatabase(path)
 
-        fcs     = ListFeatureClasses()
+        fcs = ListFeatureClasses()
         rasters = ListRasters()
-        tables  = ListTables()
+        tables = ListTables()
 
         env.workspace = workspace
 
@@ -63,7 +62,8 @@ class Geodatabase(object):
         except IOError as e:
             raise GeodatabaseError(e)
         except AssertionError:
-            raise GeodatabaseError("{} is not a valid geodatabase.".format(path))
+            raise GeodatabaseError("{} is not a valid geodatabase."
+                                   .format(path))
 
     def get_layers_dict(self):
         """
@@ -90,8 +90,9 @@ class Geodatabase(object):
             # use same name as layer
             newname = layer
 
-        if featureclass not in self.featureclasses:
-            raise GeodatabaseError("{} not found in geodatabase.".format(featureclass))
+        if layer not in self.layer:
+            raise GeodatabaseError("{} not found in geodatabase."
+                                   .format(layer))
 
         if not outputdirectory:
             outputdirectory = env.workspace
@@ -106,14 +107,18 @@ class Geodatabase(object):
 
         return newlayer
 
-    def _layer_to_file_multiple(self, layers, extension, outputdirectory, copy_function):
+    def _layer_to_file_multiple(self, layers, extension, outputdirectory,
+                                copy_function):
         """
         """
         converted = []
 
         for layer in layers:
             try:
-                converted.append(_layer_to_file(layer, extension, outputdirectory, copy_function))
+                converted.append(self._layer_to_file(layer,
+                                                     extension,
+                                                     outputdirectory,
+                                                     copy_function))
             except Exception as e:
                 exception(e)
                 print "Failed to convert layer {}.".format(layer)
@@ -138,17 +143,17 @@ class Geodatabase(object):
         if not featureclasses:
             featureclasses = self.featureclasses
 
-        newfcs = _layer_to_file_multiple(
-                featureclasses,
-                SHAPEFILE_EXT,
-                outputdirectory,
-                CopyFeatures_management)
-            )
+        newfcs = self._layer_to_file_multiple(
+            featureclasses,
+            SHAPEFILE_EXT,
+            outputdirectory,
+            CopyFeatures_management
+        )
 
         return newfcs
 
     def raster_layer_to_file(self, rasterlayer, outputdirectory,
-                             rasterformat=DEFAULT_RASTER_FORMAT,
+                             rasterformat=DEFAULT_RASTER_EXT,
                              outname_to_use=None):
         """
         """
@@ -160,24 +165,24 @@ class Geodatabase(object):
 
     def raster_layer_to_file_multiple(self, outputdirectory,
                                       rasterlayers=None,
-                                      rasterformat=DEFAULT_TABLE_FORMAT,
+                                      rasterformat=DEFAULT_TABLE_EXT,
                                       outname_to_use=None):
         """
         """
         if not rasterlayers:
             rasterlayers = self.rasterlayers
 
-        newrasters = _layer_to_file_multiple(
-                featureclasses,
-                rasterformat,
-                outputdirectory,
-                CopyFeatures_management)
-            )
+        newrasters = self._layer_to_file_multiple(
+            rasterlayers,
+            rasterformat,
+            outputdirectory,
+            CopyFeatures_management
+        )
 
-        return newfcs
+        return newrasters
 
     def table_to_file(self, table, outputdirectory,
-                      tableformat=DEFAULT_TABLE_FORMAT,
+                      tableformat=DEFAULT_TABLE_EXT,
                       outname=None):
         """
         """
@@ -189,24 +194,24 @@ class Geodatabase(object):
 
     def table_to_file_multiple(self, outputdirectory,
                                tables=None,
-                               tabularformat=DEFAULT_TABLE_FORMAT):
+                               tabularformat=DEFAULT_TABLE_EXT):
         """
         """
         if not tables:
             tables = self.tables
 
-        newfcs = _layer_to_file_multiple(
-                featureclasses,
-                tabularformat,
-                outputdirectory,
-                CopyFeatures_management)
-            )
+        newtables = self._layer_to_file_multiple(
+            tables,
+            tabularformat,
+            outputdirectory,
+            CopyFeatures_management
+        )
 
-        return newfcs
+        return newtables
 
     def all_layers_to_files(self, outputdirectory,
-                            rasterformat=DEFAULT_RASTER_FORMAT,
-                            tabularformat=DEFAULT_TABLE_FORMAT):
+                            rasterformat=DEFAULT_RASTER_EXT,
+                            tabularformat=DEFAULT_TABLE_EXT):
         """
         """
         copied = []
@@ -223,3 +228,4 @@ class Geodatabase(object):
 
 if __name__ == '__main__':
     pass
+
