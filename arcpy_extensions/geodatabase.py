@@ -131,7 +131,7 @@ class Geodatabase(object):
                                    outname=outname_to_use)
 
     def feature_class_to_shapefile_multiple(self, outputdirectory,
-                                            outputname=None
+                                            outputname=None,
                                             featureclasses=None):
         """
         """
@@ -204,7 +204,8 @@ class Geodatabase(object):
 
         return newfcs
 
-    def all_layers_to_files(self, outputdirectory, rasterformat=DEFAULT_RASTER_FORMAT,
+    def all_layers_to_files(self, outputdirectory,
+                            rasterformat=DEFAULT_RASTER_FORMAT,
                             tabularformat=DEFAULT_TABLE_FORMAT):
         """
         """
