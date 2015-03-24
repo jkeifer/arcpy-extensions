@@ -106,7 +106,7 @@ class Geodatabase(object):
 
         return newlayer
 
-    def _layer_to_file_multiple(self, layers, extension, outputdirectory, copy_function)
+    def _layer_to_file_multiple(self, layers, extension, outputdirectory, copy_function):
         """
         """
         converted = []
