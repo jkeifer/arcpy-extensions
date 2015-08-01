@@ -1,6 +1,6 @@
 import os
 from arcpy import Describe
-from constants import LAYER_TYPES, DATASET_TYPECODE
+from constants import LAYER_TYPES, DATASET_TYPECODE, TABLE_TYPECODE
 
 
 # *************** CONSTANTS ***************
@@ -75,13 +75,19 @@ class Layer(object):
         elif not extension.startswith("."):
             extension = "." + extension
 
-        print type_properties, extension, outname
-
         newlayername = outname + extension
         newlayer = os.path.join(outputworkspace, newlayername)
 
         copy_function = type_properties["copy_function"]
-        copy_function(self.path, newlayer)
+
+        if self.type == TABLE_TYPECODE:
+            # for copy functions that require the output workspace
+            # and the output name separated, e.g. for tables
+            copy_function(self.path, outputworkspace, newlayername)
+        else:
+            # for copy functions that require the output workspace
+            # and the output name joined together as one argument
+            copy_function(self.path, newlayer)
 
         return Layer(newlayer, layer_type=self.type)
 
